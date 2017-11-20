@@ -6,12 +6,15 @@ const context = canvas.getContext('2d');
 // context.fillRect(0, 0, asteroid.width, asteroid.height);
 
 class Line {
-  constructor(x1, y1, x2, y2) {
+  constructor(x1, y1, x2, y2, theta) {
     this.x1 = x1;
     this.y1 = y1;
     this.x2 = x2;
     this.y2 = y2;
+    this.theta = theta;
   }
+
+
 
   centerx() {
     return (this.x1 + (this.x2 - this.x1)/2);
@@ -34,45 +37,42 @@ class Line {
     context.stroke();
   }
 
-  drawHalfLine(pointx, pointy) {
-    var dx = this.centerx() - pointx;
-    var dy = this.centery() - pointy;
-    var theta = Math.abs(Math.atan(dy / dx));
-    console.log("Theta: " + theta);
-
-    if (dx > 0) {
-      var newx = this.centerx() - ((this.length() / 2) * Math.cos(theta))/2;
-    }
-    if (dx < 0) {
-      var newx = this.centerx() + ((this.length() / 2) * Math.cos(theta))/2;
-    }
-    if (dy > 0) {
-      var newy = this.centery() - ((this.length() / 2) * Math.sin(theta))/2;
-    }
-    if (dy < 0) {
-      var newy = this.centery() + ((this.length() / 2) * Math.sin(theta))/2;
-    }
-
+  drawHalfLine(theta, color) {
+    var newx = this.centerx() + ((this.length() / 2) * Math.cos(theta))/2;
+    var newy = this.centery() - ((this.length() / 2) * Math.sin(theta))/2;
     context.beginPath();
+    context.strokeStyle = color;
     context.moveTo(newx, newy);
     context.lineTo(this.centerx(), this.centery());
     context.stroke();
   }
 
   drawCircle() {
-    for (var x = 75; x < 101; x++) {
-      for (var y = 50; y < 101; y++) {
-          this.drawHalfLine(x, y);
-      }
+    for (var theta = 0; theta < (Math.PI * 2); theta += .1) {
+      this.drawHalfLine(theta, '#F04324');
     }
   }
 
-  rotate() {
-
+  rotate(theta) {
+    //erase current line
+    this.drawHalfLine(this.theta, '#FFF');
+    //update this.theta
+    this.theta += theta;
+    this.drawHalfLine(this.theta, '#F04324');
   }
 } //end Line class
 
-var line = new Line(75, 50, 100, 100);
-line.draw();
-//line.drawHalfLine(1, 2);
-//line.drawCircle();
+var line = new Line(75, 50, 100, 100, 0);
+// line.draw();
+//line.drawHalfLine(Math.PI * (.5))
+// line.drawCircle();
+
+var dTheta = 0;
+
+document.addEventListener('keydown', event => {
+  console.log(event);
+  if (event.keyCode == 37) {
+    line.rotate(.1);
+    console.log(line.theta)
+  }
+});
