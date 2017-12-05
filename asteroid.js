@@ -77,15 +77,16 @@ function collides() {
 }
 
 var lines = [];
-var len = 15;
+var len = 40;
 //length of falling line
-var yOffset = 20;
+var yOffset = 50;
 
 //initialize the falling line objects
 for (var i = 0; i < len; i++) {
   var randx = 600 * Math.random() | 0;
-  var randSpeed = 10 * Math.random() | 0 + 3;
-  lines[i] = new Line(randx, 0, randx, yOffset, 90, '#000', randSpeed);
+  var randSpeed = 8 * Math.random() | 1;
+  var randTheta = 360 * Math.random() | 0;
+  lines[i] = new Line(randx, 0, randx, yOffset, randTheta, '#000', randSpeed);
 }
 console.log(lines);
 
@@ -96,6 +97,10 @@ function update() {
   //increment the falling lines
   for (var i = 0; i < len; i++) {
     lines[i].centery += lines[i].speed;
+    if (lines[i].centery > asteroid.height) {
+      lines[i].centery = 0;
+    }
+    lines[i].theta += 1;
     lines[i].draw();
   }
   //draw all the things
